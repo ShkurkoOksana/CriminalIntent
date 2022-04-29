@@ -18,6 +18,7 @@ public class CrimeLab {
             Crime crime = new Crime();
             crime.setTitle("Crime #" + i);
             crime.setSolved(i % 2 == 0);
+            crime.setType((int)Math.round(Math.random()));
             mCrimes.add(crime);
         }
     }

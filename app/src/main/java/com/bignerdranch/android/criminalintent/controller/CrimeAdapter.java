@@ -9,11 +9,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.criminalintent.databinding.ListItemCrimeBinding;
+import com.bignerdranch.android.criminalintent.databinding.ListItemCrimeRequiredPoliceBinding;
 import com.bignerdranch.android.criminalintent.model.Crime;
 
 import java.util.List;
 
-public class CrimeAdapter extends RecyclerView.Adapter<CrimeAdapter.CrimeHolder> {
+public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final int TYPE_1 = 0;
+    private final int TYPE_2 = 1; // Require police
+
     private List<Crime> mCrimes;
 
     public CrimeAdapter(List<Crime> crimes) {
@@ -22,25 +26,60 @@ public class CrimeAdapter extends RecyclerView.Adapter<CrimeAdapter.CrimeHolder>
 
     @NonNull
     @Override
-    public CrimeAdapter.CrimeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        ListItemCrimeBinding listItemCrimeBinding = ListItemCrimeBinding.inflate(layoutInflater, parent, false);
 
-        return new CrimeHolder(listItemCrimeBinding);
+        switch (viewType) {
+            case TYPE_1:
+                ListItemCrimeBinding listItemCrimeBinding = ListItemCrimeBinding.inflate(layoutInflater, parent, false);
+                CrimeHolder crimeHolder = new CrimeHolder(listItemCrimeBinding);
+                return crimeHolder;
+            case TYPE_2:
+                ListItemCrimeRequiredPoliceBinding listItemCrimeRequiredPoliceBinding = ListItemCrimeRequiredPoliceBinding.inflate(layoutInflater, parent, false);
+                CrimeHolderRequiredPolice crimeHolderRequiredPolice = new CrimeHolderRequiredPolice(listItemCrimeRequiredPoliceBinding);
+                return crimeHolderRequiredPolice;
+        }
+
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CrimeAdapter.CrimeHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Crime crime = mCrimes.get(position);
-        holder.bindView(crime);
+        if (crime != null) {
+            switch (crime.getType()) {
+                case TYPE_1:
+                    ((CrimeHolder) holder).bindViewCrimeHolder(crime);
+                    break;
+                case TYPE_2:
+                    ((CrimeHolderRequiredPolice) holder).bindViewCrimeHolderRequiredPolice(crime);
+                    break;
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
+        if (mCrimes == null) {
+            return 0;
+        }
+
         return mCrimes.size();
     }
 
-    class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    @Override
+    public int getItemViewType(int position) {
+        if (mCrimes != null) {
+            Crime crime = mCrimes.get(position);
+            if (crime != null) {
+                return crime.getType();
+            }
+        }
+
+        return 0;
+    }
+
+    public static class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ListItemCrimeBinding mListItemCrimeBinding;
         private Crime mCrime;
 
@@ -51,7 +90,7 @@ public class CrimeAdapter extends RecyclerView.Adapter<CrimeAdapter.CrimeHolder>
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(Crime crime) {
+        public void bindViewCrimeHolder(Crime crime) {
             mCrime = crime;
 
             mListItemCrimeBinding.crimeTitle.setText(mCrime.getTitle());
@@ -61,6 +100,35 @@ public class CrimeAdapter extends RecyclerView.Adapter<CrimeAdapter.CrimeHolder>
         @Override
         public void onClick(View v) {
             Toast.makeText(itemView.getContext(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static class CrimeHolderRequiredPolice extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private ListItemCrimeRequiredPoliceBinding mListItemCrimeRequiredPoliceBinding;
+        private Crime mCrime;
+
+        public CrimeHolderRequiredPolice(ListItemCrimeRequiredPoliceBinding listItemCrimeBinding) {
+            super(listItemCrimeBinding.getRoot());
+            this.mListItemCrimeRequiredPoliceBinding = listItemCrimeBinding;
+
+            itemView.setOnClickListener(this);
+        }
+
+        public void bindViewCrimeHolderRequiredPolice(Crime crime) {
+            mCrime = crime;
+
+            mListItemCrimeRequiredPoliceBinding.crimeTitleRequiredPolice.setText(mCrime.getTitle());
+            mListItemCrimeRequiredPoliceBinding.crimeDateRequiredPolice.setText(mCrime.getDate().toString());
+            mListItemCrimeRequiredPoliceBinding.buttonContactPolice.setOnClickListener(this::onClickButtonContactPolice);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(itemView.getContext(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+        }
+
+        private void onClickButtonContactPolice(View v) {
+            Toast.makeText(itemView.getContext(), "Police number 911!", Toast.LENGTH_SHORT).show();
         }
     }
 }
