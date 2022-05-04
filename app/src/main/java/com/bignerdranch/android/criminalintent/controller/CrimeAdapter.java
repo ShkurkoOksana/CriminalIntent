@@ -119,7 +119,7 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             mListItemCrimeRequiredPoliceBinding.crimeTitleRequiredPolice.setText(mCrime.getTitle());
             mListItemCrimeRequiredPoliceBinding.crimeDateRequiredPolice.setText(mCrime.getDate().toString());
-            mListItemCrimeRequiredPoliceBinding.buttonContactPolice.setOnClickListener(this::onClickButtonContactPolice);
+            //mListItemCrimeRequiredPoliceBinding.buttonContactPolice.setOnClickListener(this::onClickButtonContactPolice);
         }
 
         @Override
