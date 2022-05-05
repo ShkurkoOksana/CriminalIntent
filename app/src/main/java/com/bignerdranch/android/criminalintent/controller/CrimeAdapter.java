@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent.controller;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.bignerdranch.android.criminalintent.databinding.ListItemCrimeBinding;
 import com.bignerdranch.android.criminalintent.databinding.ListItemCrimeRequiredPoliceBinding;
 import com.bignerdranch.android.criminalintent.model.Crime;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -90,11 +92,14 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemView.setOnClickListener(this);
         }
 
+        @SuppressLint("SimpleDateFormat")
         public void bindViewCrimeHolder(Crime crime) {
             mCrime = crime;
 
             mListItemCrimeBinding.crimeTitle.setText(mCrime.getTitle());
-            mListItemCrimeBinding.crimeDate.setText(mCrime.getDate().toString());
+
+
+            mListItemCrimeBinding.crimeDate.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy.").format(mCrime.getDate()));
         }
 
         @Override
@@ -114,12 +119,13 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             itemView.setOnClickListener(this);
         }
 
+        @SuppressLint("SimpleDateFormat")
         public void bindViewCrimeHolderRequiredPolice(Crime crime) {
             mCrime = crime;
 
             mListItemCrimeRequiredPoliceBinding.crimeTitleRequiredPolice.setText(mCrime.getTitle());
-            mListItemCrimeRequiredPoliceBinding.crimeDateRequiredPolice.setText(mCrime.getDate().toString());
-            //mListItemCrimeRequiredPoliceBinding.buttonContactPolice.setOnClickListener(this::onClickButtonContactPolice);
+            mListItemCrimeRequiredPoliceBinding.crimeDateRequiredPolice.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy.").format(mCrime.getDate()));
+            mListItemCrimeRequiredPoliceBinding.handcuffs.setOnClickListener(this::onClickButtonContactPolice);
         }
 
         @Override
