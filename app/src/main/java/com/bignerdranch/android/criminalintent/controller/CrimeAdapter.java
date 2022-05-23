@@ -1,6 +1,8 @@
 package com.bignerdranch.android.criminalintent.controller;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,8 @@ import java.util.List;
 public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int TYPE_1 = 0;
     private final int TYPE_2 = 1; // Require police
+
+    public static final String EXTRA_CRIME_ID = "crime_id";
 
     private List<Crime> mCrimes;
 
@@ -58,7 +62,10 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     break;
             }
         }
+
+        notifyItemChanged(position);
     }
+
 
     @Override
     public int getItemCount() {
@@ -81,12 +88,17 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return 0;
     }
 
+
+
     public static class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final Context mContext;
+
         private ListItemCrimeBinding mListItemCrimeBinding;
         private Crime mCrime;
 
         public CrimeHolder(ListItemCrimeBinding listItemCrimeBinding) {
             super(listItemCrimeBinding.getRoot());
+            mContext = itemView.getContext();
             this.mListItemCrimeBinding = listItemCrimeBinding;
 
             itemView.setOnClickListener(this);
@@ -95,25 +107,28 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         @SuppressLint("SimpleDateFormat")
         public void bindViewCrimeHolder(Crime crime) {
             mCrime = crime;
-
             mListItemCrimeBinding.crimeTitle.setText(mCrime.getTitle());
-
-
             mListItemCrimeBinding.crimeDate.setText(new SimpleDateFormat("EEEE, MMM dd, yyyy.").format(mCrime.getDate()));
         }
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(itemView.getContext(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            final Intent intent;
+            intent = new Intent(mContext, CrimeActivity.class);
+            intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
+            mContext.startActivity(intent);
         }
     }
 
     public static class CrimeHolderRequiredPolice extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final Context mContext;
+
         private ListItemCrimeRequiredPoliceBinding mListItemCrimeRequiredPoliceBinding;
         private Crime mCrime;
 
         public CrimeHolderRequiredPolice(ListItemCrimeRequiredPoliceBinding listItemCrimeBinding) {
             super(listItemCrimeBinding.getRoot());
+            mContext = itemView.getContext();
             this.mListItemCrimeRequiredPoliceBinding = listItemCrimeBinding;
 
             itemView.setOnClickListener(this);
@@ -130,7 +145,10 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(itemView.getContext(), mCrime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            final Intent intent;
+            intent = new Intent(mContext, CrimeActivity.class);
+            intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
+            mContext.startActivity(intent);
         }
 
         private void onClickButtonContactPolice(View v) {
