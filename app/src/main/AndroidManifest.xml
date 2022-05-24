@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CriminalIntent">
         <activity
-            android:name=".controller.CrimeActivity"
+            android:name=".controller.CrimePagerActivity"
             android:exported="false" />
 
         <activity

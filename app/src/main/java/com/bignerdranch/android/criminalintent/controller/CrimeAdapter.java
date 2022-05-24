@@ -62,8 +62,6 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     break;
             }
         }
-
-        notifyItemChanged(position);
     }
 
 
@@ -114,7 +112,7 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         @Override
         public void onClick(View v) {
             final Intent intent;
-            intent = new Intent(mContext, CrimeActivity.class);
+            intent = new Intent(mContext, CrimePagerActivity.class);
             intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
             mContext.startActivity(intent);
         }
@@ -146,7 +144,7 @@ public class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         @Override
         public void onClick(View v) {
             final Intent intent;
-            intent = new Intent(mContext, CrimeActivity.class);
+            intent = new Intent(mContext, CrimePagerActivity.class);
             intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
             mContext.startActivity(intent);
         }
