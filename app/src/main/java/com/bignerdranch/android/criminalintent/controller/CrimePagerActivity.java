@@ -8,11 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bignerdranch.android.criminalintent.databinding.ActivityCrimePagerBinding;
 import com.bignerdranch.android.criminalintent.model.Crime;
@@ -23,7 +20,7 @@ import java.util.UUID;
 
 public class CrimePagerActivity extends AppCompatActivity {
     private ActivityCrimePagerBinding mActivityCrimePagerBinding;
-    private ViewPager mViewPager;
+    private ViewPager2 mViewPager;
     private Button mGoToFirstButton;
     private Button mGoToLastButton;
     private List<Crime> mCrimes;
@@ -52,29 +49,26 @@ public class CrimePagerActivity extends AppCompatActivity {
 
         mCrimes = CrimeLab.get(this).getCrimes();
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
+        mViewPager.setAdapter(new FragmentStateAdapter(this) {
             @NonNull
             @Override
-            public Fragment getItem(int position) {
+            public Fragment createFragment(int position) {
                 Crime crime = mCrimes.get(position);
 
                 return CrimeFragment.newInstance(crime.getId());
             }
 
             @Override
-            public int getCount() {
+            public int getItemCount() {
                 return mCrimes.size();
             }
         });
 
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
+        mViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
+                super.onPageSelected(position);
+
                 if (position == 0) {
                     mGoToFirstButton.setVisibility(View.INVISIBLE);
                     mGoToLastButton.setVisibility(View.VISIBLE);
@@ -85,10 +79,6 @@ public class CrimePagerActivity extends AppCompatActivity {
                     mGoToFirstButton.setVisibility(View.VISIBLE);
                     mGoToLastButton.setVisibility(View.VISIBLE);
                 }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
             }
         });
 
