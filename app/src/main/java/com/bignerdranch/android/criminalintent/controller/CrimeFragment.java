@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeBinding;
 import com.bignerdranch.android.criminalintent.model.Crime;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class CrimeFragment extends Fragment {
     private static final String CRIME = "crime";
     public static final String ARG_CRIME_ID = "crime_id";
+    private static final String DIALOG_DATE = "dialog_date";
 
     private FragmentCrimeBinding mFragmentCrimeBinding;
 
@@ -72,15 +74,14 @@ public class CrimeFragment extends Fragment {
         });
 
         mFragmentCrimeBinding.crimeDate.setText(mCrime.getDate().toString());
-        mFragmentCrimeBinding.crimeDate.setEnabled(false);
+        mFragmentCrimeBinding.crimeDate.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getFragmentManager();
+            DatePickerFragment dialog = new DatePickerFragment();
+            dialog.show(fragmentManager, DIALOG_DATE);
+        });
 
         mFragmentCrimeBinding.crimeSolved.setChecked(mCrime.isSolved());
-        mFragmentCrimeBinding.crimeSolved.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCrime.setSolved(isChecked);
-            }
-        });
+        mFragmentCrimeBinding.crimeSolved.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
 
         return view;
     }
