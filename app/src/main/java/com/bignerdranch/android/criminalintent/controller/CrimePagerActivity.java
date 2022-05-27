@@ -1,6 +1,8 @@
 package com.bignerdranch.android.criminalintent.controller;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +24,8 @@ import java.util.UUID;
 public class CrimePagerActivity extends AppCompatActivity {
     private ActivityCrimePagerBinding mActivityCrimePagerBinding;
     private ViewPager mViewPager;
+    private Button mGoToFirstButton;
+    private Button mGoToLastButton;
     private List<Crime> mCrimes;
 
     @Override
@@ -35,6 +39,17 @@ public class CrimePagerActivity extends AppCompatActivity {
 
         mViewPager = mActivityCrimePagerBinding.crimeViewPager;
 
+        mGoToFirstButton = mActivityCrimePagerBinding.goToFirstCrimeButton;
+        mGoToLastButton = mActivityCrimePagerBinding.goToLastCrimeButton;
+
+        mGoToFirstButton.setOnClickListener(v -> {
+            mViewPager.setCurrentItem(0);
+        });
+
+        mGoToLastButton.setOnClickListener(v -> {
+            mViewPager.setCurrentItem(mCrimes.size() - 1);
+        });
+
         mCrimes = CrimeLab.get(this).getCrimes();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -43,12 +58,37 @@ public class CrimePagerActivity extends AppCompatActivity {
             @Override
             public Fragment getItem(int position) {
                 Crime crime = mCrimes.get(position);
+
                 return CrimeFragment.newInstance(crime.getId());
             }
 
             @Override
             public int getCount() {
                 return mCrimes.size();
+            }
+        });
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    mGoToFirstButton.setVisibility(View.INVISIBLE);
+                    mGoToLastButton.setVisibility(View.VISIBLE);
+                } else if (position == mCrimes.size() - 1) {
+                    mGoToFirstButton.setVisibility(View.VISIBLE);
+                    mGoToLastButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mGoToFirstButton.setVisibility(View.VISIBLE);
+                    mGoToLastButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
             }
         });
 
