@@ -1,5 +1,7 @@
 package com.bignerdranch.android.criminalintent.controller;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,12 +19,14 @@ import com.bignerdranch.android.criminalintent.databinding.FragmentCrimeBinding;
 import com.bignerdranch.android.criminalintent.model.Crime;
 import com.bignerdranch.android.criminalintent.model.CrimeLab;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
     private static final String CRIME = "crime";
     public static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "dialog_date";
+    public static final int REQUEST_DATE = 0;
 
     private FragmentCrimeBinding mFragmentCrimeBinding;
 
@@ -73,10 +77,11 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        mFragmentCrimeBinding.crimeDate.setText(mCrime.getDate().toString());
+        updateDate();
         mFragmentCrimeBinding.crimeDate.setOnClickListener(v -> {
             FragmentManager fragmentManager = getFragmentManager();
-            DatePickerFragment dialog = new DatePickerFragment();
+            DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+            dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
             dialog.show(fragmentManager, DIALOG_DATE);
         });
 
@@ -84,6 +89,23 @@ public class CrimeFragment extends Fragment {
         mFragmentCrimeBinding.crimeSolved.setOnCheckedChangeListener((buttonView, isChecked) -> mCrime.setSolved(isChecked));
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            updateDate();
+        }
+    }
+
+    private void updateDate() {
+        mFragmentCrimeBinding.crimeDate.setText(mCrime.getDate().toString());
     }
 
     @Override
